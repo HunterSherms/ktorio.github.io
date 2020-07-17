@@ -19,7 +19,7 @@ uses Micrometer Metrics which requires JRE 8 or higher.
 
 ## Exposed Metrics
 
-Depending on your backing time series database or metrics service, the names of these metrics my [vary](
+Depending on your backing time series database or metrics service, the names of these metrics may [vary](
 https://micrometer.io/docs/concepts#_naming_meters) to follow naming conventions.
 
 ### `ktor.http.server.requests.active`
