@@ -11,24 +11,24 @@ redirect_from:
 ktor_version_review: 1.0.0
 ---
 
-The Metrics feature allows you to configure the [Metrics](https://micrometer.io/)
+The Metrics feature allows you to configure [Metrics](https://micrometer.io/)
 to get useful information about the server and incoming requests. This implementation 
-uses Micrometer Metrics which requires a JRE 8 or higher. 
+uses Micrometer Metrics which requires JRE 8 or higher. 
 
 {% include feature.html %}
 
 ## Exposed Metrics
 
-Depending on your backing timeline database, the names of this metrics my [vary](
-https://micrometer.io/docs/concepts#_naming_meters) to follow the naming conventions.
+Depending on your backing time series database or metrics service, the names of these metrics my [vary](
+https://micrometer.io/docs/concepts#_naming_meters) to follow naming conventions.
 
 ### `ktor.http.server.requests.active`
-The active [gauge](https://micrometer.io/docs/concepts#_gauges) counts the amount
+The active [gauge](https://micrometer.io/docs/concepts#_gauges) counts the number
 of concurrent http requests to the server. There are no tags for this metric.
 
 ### `ktor.http.server.requests`
-This [timer](https://micrometer.io/docs/concepts#_timers) measures the time of 
-each request. This feature provides the following tags for this timer:
+The requests [timer](https://micrometer.io/docs/concepts#_timers) measures the time of 
+each request. This feature provides the following tags:
 - `address`: `<host>:<port>` of the url requested by the client
 - `method`: the http method (e.g. `GET` or `POST`)
 - `route`: the ktor route handling the requests path (e.g. 
@@ -44,8 +44,8 @@ each request. This feature provides the following tags for this timer:
 ## Installing
 
 The Metrics feature requires you to specify a `MeterRegistry` at installation. 
-For test purposes you can use the `SimpleMeterRegistry`, for more productive 
-environments you can choose [any registry depending on your timeline database 
+For testing purposes you can use the `SimpleMeterRegistry`. For production 
+environments you can choose [any available registry depending on your time series database 
 vendor](https://micrometer.io/docs).
 
 ```kotlin
@@ -56,9 +56,9 @@ install(MicrometerMetrics) {
 
 ### Meter Binders
 
-Micrometer provides some low level metrics. These are provided via `MeterBinder`s.
-By default this feature installs a list of Metrics but you can add your own or 
-provide an empty list if you don't want to install this feature install any 
+Micrometer provides some low level server and JVM metrics. These are provided via `MeterBinder`s.
+Micrometer installs a small list of Metrics by default, and provides many additional metrics that can be added
+like so. Provide an empty list if you don't want to install any metrics.
 `MeterBinder`.
 
 ```kotlin
@@ -78,11 +78,10 @@ install(MicrometerMetrics) {
 ### Distribution Statistic Configuration
 
 Micrometer provides various ways to configure and expose histograms. You can
-expose either (client side) percentile  or the histogram counters (and the 
-timeline database 
-calculates the percentile on the server side). While percentile are supported
-by all backends, they are more expensive in [memory footprint](
-https://micrometer.io/docs/concepts#_memory_footprint_estimation)) and cannot be 
+expose either (client side) percentiles or histogram counters for which the 
+time series database will calculate percentiles. While percentiles are supported
+by all backends, they can be more memory intensive - [memory footprint](
+https://micrometer.io/docs/concepts#_memory_footprint_estimation)) - and cannot be 
 aggregated over several dimensions. Histogram counters can be aggregated but 
 not all backends support them. The full documentation can be found [here](
     https://micrometer.io/docs/concepts#_histograms_and_percentiles).
@@ -110,7 +109,7 @@ install(MicrometerMetrics) {
 ### Customizing Timers
 To customize the tags for each timer, you can configure a lamda that is called
 for each request and can extend the builder for the timer. Note, each unique 
-combination of tag values results in an own metric. Therefore it is not recommended
+combination of tag values results in its own metric. Therefore it is not recommended
 to put properties with high cardinality (e.g. resource ids) into tags.
 
 ```kotlin
